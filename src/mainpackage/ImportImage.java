@@ -10,8 +10,8 @@ import javax.imageio.*;
 import mainpackage.Noisemaker;
 import mainpackage.Array;
 public class ImportImage {
-	Array array = new Array();
-	public int[][] getImage(File string){
+	public Object[] getImage(File string){
+		Array histo = new Array();
 		try{
 			BufferedImage image = ImageIO.read(string);
 			byte[] pixels = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
@@ -19,41 +19,23 @@ public class ImportImage {
 			int height = image.getHeight();
 			boolean hasAlpha = image.getAlphaRaster() != null;
 		    int[][] result = new int[height][width];
-			     if (hasAlpha) {
-			         final int pixelLength = 4;
-			         for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
-			            int argb = 0;
-			            argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
-			            argb += ((int) pixels[pixel + 1] & 0xff); // blue
-			            argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
-			            argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
-			            result[row][col] = argb;
-			            col++;
-			            if (col == width) {
-			               col = 0;
-			               row++;
-			            }
-			         }
-			      } 
-			     else {
-			         final int pixelLength = 3;
-			         for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
-			            int argb = 0;
-			            argb += -16777216; // 255 alpha
-			            int blue = ((int) pixels[pixel] & 0xff); // blue
-			            int green = (((int) pixels[pixel + 1] & 0xff) << 8)>>8 ; // green
-			            int red = (((int) pixels[pixel + 2] & 0xff) << 16)>> 16 ; // red
-			            int newcolor = (int) Math.floor(0.216*red + 0.7152*green + 0.0722*blue);
-			            Array.arrayadd(newcolor);
-			            result[row][col] = newcolor;
-			            col++;
-			            if (col == width) {
-			               col = 0;
-			               row++;
-			            }
-			         }
-			      }
-			     return result;
+			final int pixelLength = 3;
+			for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength) {
+			    int argb = 0;
+			    argb += -16777216; // 255 alpha
+			    int blue = ((int) pixels[pixel] & 0xff); // blue
+			    int green = (((int) pixels[pixel + 1] & 0xff) << 8)>>8 ; // green
+			    int red = (((int) pixels[pixel + 2] & 0xff) << 16)>> 16 ; // red
+			    int newcolor = (int) Math.floor(0.216*red + 0.7152*green + 0.0722*blue);
+			    histo.arrayadd(newcolor);
+			    result[row][col] = newcolor;
+			    col++;
+			    if (col == width) {
+			    	col = 0;
+			    	row++;
+			    }
+			}
+		return new Object[]{result,histo};
 		}
 		catch (IOException e){
 			e.printStackTrace();
@@ -91,10 +73,13 @@ public class ImportImage {
 	public static void main(String[]args) throws IOException{
 		ImportImage ri = new ImportImage();
 		Noisemaker ns = new Noisemaker();
-		File file = new File("C:\\Users\\Brandon\\Desktop\\applejack.jpg");
-		int[][] array = ri.getImage(file);
-		int[][] array1 = ns.saltandpepper(array, 10);
-		ri.pixeltoimage(array1,"applewithnoise");
+		Algorithms algo = new Algorithms();
+		File file = new File("C:\\Users\\Brandon\\workspace\\imageprocessing\\input.jpg");
+		Array histo = (Array) ri.getImage(file)[1];
+		int[][] array = (int[][]) ri.getImage(file)[0];
+		int[][] array2 = algo.Histoequalize(histo, array);
+		ri.pixeltoimage(array,"beforeequalize");
+		ri.pixeltoimage(array2, "afterequalize");
 		
 	}
 
