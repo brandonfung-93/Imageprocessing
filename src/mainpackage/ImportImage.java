@@ -70,7 +70,7 @@ public class ImportImage {
         ImageIO.write(bi, "jpg",new File("C:\\Users\\Brandon\\workspace\\imageprocessing\\"+filename+".jpg"));
 		
 	}
-	public static void main(String[]args) throws IOException{
+	/*public static void main(String[]args) throws IOException{
 		ImportImage ri = new ImportImage();
 		Noisemaker ns = new Noisemaker();
 		Algorithms algo = new Algorithms();
@@ -81,7 +81,7 @@ public class ImportImage {
 		ri.pixeltoimage(array,"beforeequalize");
 		ri.pixeltoimage(array2, "afterequalize");
 		
-	}
+	}*/
 
 
 } 

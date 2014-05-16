@@ -1,5 +1,7 @@
 package mainpackage;
 
+import java.io.IOException;
+
 public class Array {
 	int[] histo = new int[256];
     /** Creates a new instance of Array */
